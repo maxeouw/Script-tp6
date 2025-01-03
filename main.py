@@ -38,12 +38,32 @@ def run_traceroute(target, progressive, output_file):
         else:
             print(f"Error running traceroute: {result.stderr}", file=sys.stderr)
 
+def interactive_mode():
+    print("Welcome to the Traceroute Tool!")
+    target = input("Enter the target URL or IP address: ").strip()
+    while not target:
+        print("Target cannot be empty.")
+        target = input("Enter the target URL or IP address: ").strip()
+
+    progressive = input("Enable progressive mode? (yes/no) [no]: ").strip().lower()
+    progressive = progressive == "yes"
+
+    output_file = input("Enter the output file name (or leave empty for no file): ").strip()
+    output_file = output_file if output_file else None
+
+    print("\nStarting traceroute...")
+    run_traceroute(target, progressive, output_file)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Trace the route to a target and display intermediate IP addresses.")
-    parser.add_argument("target", help="The target URL or IP address.")
+    parser.add_argument("target", nargs="?", help="The target URL or IP address.")
     parser.add_argument("-p", "--progressive", action="store_true", help="Display IPs progressively.")
     parser.add_argument("-o", "--output-file", help="File to save the traceroute result.")
+    parser.add_argument("-i", "--interactive", action="store_true", help="Run the program in interactive mode.")
 
     args = parser.parse_args()
 
-    run_traceroute(args.target, args.progressive, args.output_file)
+    if args.interactive or not args.target:
+        interactive_mode()
+    else:
+        run_traceroute(args.target, args.progressive, args.output_file)
