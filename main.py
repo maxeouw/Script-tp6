@@ -6,12 +6,23 @@ import platform
 import locale
 
 def parse_traceroute_output(output):
-    """Parse les adresses IP des sorties du traceroute."""
+    """Parse les adresses IP des sorties du traceroute.
+
+    Raises:
+        ValueError: If the provided input is not a valid string.
+    """
     ip_pattern = re.compile(r"(?:\d{1,3}\.){3}\d{1,3}")
     return ip_pattern.findall(output)
 
 def run_traceroute(target, progressive, output_file):
-    """Exécute le traceroute avec la gestion des exceptions."""
+    """Exécute le traceroute avec la gestion des exceptions.
+
+    Raises:
+        FileNotFoundError: If the traceroute/tracert command is not found.
+        PermissionError: If access to the output file is denied.
+        RuntimeError: If the traceroute execution fails.
+        Exception: For any unexpected errors.
+    """
     try:
         is_windows = platform.system().lower() == "windows"
         encoding = locale.getpreferredencoding() if is_windows else "utf-8"
@@ -52,7 +63,12 @@ def run_traceroute(target, progressive, output_file):
         print(f"An unexpected error occurred: {e}", file=sys.stderr)
 
 def interactive_mode():
-    """Mode interactif pour demander les options à l'utilisateur."""
+    """Mode interactif pour demander les options à l'utilisateur.
+
+    Raises:
+        KeyboardInterrupt: If the user interrupts the process.
+        ValueError: If user-provided input is invalid.
+    """
     try:
         print("Welcome to the Traceroute Tool!")
         target = input("Enter the target URL or IP address: ").strip()
